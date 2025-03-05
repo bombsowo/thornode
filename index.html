@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THORSwap Nodes Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #0B0E17;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1A1F2E;
+            border-right: 1px solid #2D3348;
+            flex-shrink: 0;
+        }
+
+        .logo-container {
+            padding: 16px;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background-color: #3FBDD0;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            padding: 16px;
+        }
+
+        .menu-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: #6B7280;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #2D3348;
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: #3FBDD0;
+            color: white;
+        }
+
+        .menu-item.support {
+            background-color: #3FBDD0;
+            color: white;
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .connect-btn {
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #EF4444;
+            color: white;
+            font-size: 10px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stats-card {
+            background-color: #1A1F2E;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-inner {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .total-bond {
+            background-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .total-bond .icon-inner {
+            background-color: #D97706;
+        }
+
+        .active-bond {
+            background-color: rgba(219, 39, 119, 0.3);
+        }
+
+        .active-bond .icon-inner {
+            background-color: #DB2777;
+        }
+
+        .standby-bond {
+            background-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .standby-bond .icon-inner {
+            background-color: #7C3AED;
+        }
+
+        .bonding-apy {
+            background-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .bonding-apy .icon-inner {
+            background-color: #4F46E5;
+        }
+
+        .card-value {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .main-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sub-value {
+            font-size: 14px;
+            color: #34D399;
+        }
+
+        /* Search Section */
+        .search-form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 16px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            border-radius: 4px 0 0 4px;
+            color: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3FBDD0;
+        }
+
+        .search-btn {
+            background-color: #3FBDD0;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #36a9bb;
+        }
+
+        .manage-btn {
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .manage-btn:hover {
+            background-color: #2D3348;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .filter-tab {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+
+        .filter-tab.active {
+            background-color: #3FBDD0;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .nodes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .nodes-table th, .nodes-table td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .nodes-table th {
+            background-color: #1A1F2E;
+            color: #9CA3AF;
+            font-weight: normal;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .nodes-table th i {
+            margin-left: 4px;
+            font-size: 12px;
+        }
+
+        .nodes-table tbody tr {
+            background-color: #1A1F2E;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .nodes-table tbody tr:hover {
+            background-color: #2D3348;
+        }
+
+        .address-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .address-cell i {
+            color: #6B7280;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1A1F2E;
+            border-radius: 8px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #9CA3AF;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: #0B0E17;
+            border: 1px solid #2D3348;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3FBDD0;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid #2D3348;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background-color: #3FBDD0;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Search Results */
+        .search-results {
+            display: none;
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            border-radius: 4px;
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: absolute;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .search-result-item:hover {
+            background-color: #2D3348;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #2D3348;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100%;
+                z-index: 1000;
+                transition: right 0.3s ease;
+            }
+
+            .sidebar.show-mobile {
+                right: 0;
+            }
+
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            .main-content {
+                margin-top: 60px; /* Space for the mobile menu toggle */
+            }
+        }
+
+        /* Mobile menu styles */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .header {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                    <span class="logo-text">THORSWAP</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-item">
+                        <i class="fa-solid fa-right-left"></i>
+                        <span>SWAP</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-coins"></i>
+                        <span>EARN</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                        <span>BORROW</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span>REFERRAL</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>POOL</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span>DEPOSIT</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                        <span>LIQUIDITY</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span>RUNEPOOL</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>WALLET</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>WALLET</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>SEND</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-user"></i>
+                        <span>THORName</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>STATS</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>DASHBOARD</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>THORYield</span>
+                    </div>
+                    <div class="menu-item active">
+                        <i class="fa-solid fa-server"></i>
+                        <span>THORNode</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>THOR</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <span>STAKING</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-item support">
+                        <i class="fa-solid fa-life-ring"></i>
+                        <span>SUPPORT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="header-right">
+                    <button class="connect-btn">Connect</button>
+                    <div class="icon-btn notification">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge">2</span>
+                    </div>
+                    <div class="icon-btn">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+                    <div class="icon-btn">
+                        <i class="fa-solid fa-rotate"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Total Bond</span>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="card-icon total-bond">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">$114.56M</span>
+                        <span class="sub-value">($3.9M ↑)</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Active Bond</span>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="card-icon active-bond">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">$101.06M</span>
+                        <span class="sub-value">($2.8M ↑)</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Standby Bond</span>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="card-icon standby-bond">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">$13.50M</span>
+                        <span class="sub-value">($1.1M ↑)</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Bonding APY</span>
+                        </div>
+                        <div class="card-icon bonding-apy">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">558.92%</span>
+                    </div>
+                </div>
+            </div>
+
+         
+            <form action=" https://forms.un-static.com/forms/a327cc6d539e74ae0dd91635de091bdc9fb4fbdb"  class="search-form" method="post">
+                <div class="search-container">
+                    <i class="fa-solid fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        name="nodeAddress" 
+                        id="nodeAddress" 
+                        placeholder="Search node address" 
+                        class="search-input"
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" id="searchBtn" class="search-btn">
+                        Search
+                    </button>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <button type="button" id="manageBtn" class="manage-btn">Manage</button>
+            </form>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active">Active</button>
+                <button class="filter-tab">Standby</button>
+                <button class="filter-tab">Whitelisted</button>
+            </div>
+
+            <div class="table-container">
+                <table class="nodes-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Address</th>
+                            <th>
+                                Version
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>IP</th>
+                            <th>
+                                Rewards
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>
+                                Slash
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>
+                                Bond
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>
+                                Active Block
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="nodesTableBody">
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor0...g2kz
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>104.194.134.58</td>
+                            <td>3,933.22</td>
+                            <td>0</td>
+                            <td>1,185,503.88</td>
+                            <td>18,698,247</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thorh...mahl
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>107.189.24.101</td>
+                            <td>3,933.07</td>
+                            <td>1</td>
+                            <td>1,128,026.10</td>
+                            <td>19,075,189</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor0...j5pq
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.231</td>
+                            <td>3,893.33</td>
+                            <td>314</td>
+                            <td>1,123,104.04</td>
+                            <td>19,912,946</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor4...88d
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.228</td>
+                            <td>3,933.22</td>
+                            <td>0</td>
+                            <td>1,119,705.81</td>
+                            <td>20,007,892</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thorp...em0l
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.230</td>
+                            <td>3,893.50</td>
+                            <td>250</td>
+                            <td>1,112,166.56</td>
+                            <td>20,052,024</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor3...6qyl
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>34.88.64.113</td>
+                            <td>3,933.22</td>
+                            <td>0</td>
+                            <td>1,100,696.06</td>
+                            <td>20,007,892</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thork...jsv8
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.232</td>
+                            <td>3,893.50</td>
+                            <td>250</td>
+                            <td>1,099,562.39</td>
+                            <td>17,419,861</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Node Modal -->
+    <div id="manageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Node</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="manageNodeForm">
+                    <div class="form-group">
+                        <label for="nodeAddressInput">Node Address</label>
+                        <input type="text" id="nodeAddressInput" name="nodeAddressInput" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeVersion">Version</label>
+                        <input type="text" id="nodeVersion" name="nodeVersion" class="form-control" value="3.2.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeIP">IP Address</label>
+                        <input type="text" id="nodeIP" name="nodeIP" class="form-control" placeholder="e.g. 104.194.134.58" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeStatus">Status</label>
+                        <select id="nodeStatus" name="nodeStatus" class="form-control">
+                            <option value="active">Active</option>
+                            <option value="standby">Standby</option>
+                            <option value="whitelisted">Whitelisted</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeBond">Bond Amount</label>
+                        <input type="text" id="nodeBond" name="nodeBond" class="form-control" placeholder="e.g. 1,000,000.00" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelManage">Cancel</button>
+                <button type="button" class="btn-submit" id="submitManage">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+
+    
+</body>
+</html>

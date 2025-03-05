@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THORSwap Nodes Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #0B0E17;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #1A1F2E;
+            border-right: 1px solid #2D3348;
+            flex-shrink: 0;
+        }
+
+        .logo-container {
+            padding: 16px;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            background-color: #3FBDD0;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            padding: 16px;
+        }
+
+        .menu-section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+            color: #6B7280;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #2D3348;
+            color: white;
+        }
+
+        .menu-item.active {
+            background-color: #3FBDD0;
+            color: white;
+        }
+
+        .menu-item.support {
+            background-color: #3FBDD0;
+            color: white;
+        }
+
+        .menu-item i {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .connect-btn {
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #EF4444;
+            color: white;
+            font-size: 10px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Stats Cards */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stats-card {
+            background-color: #1A1F2E;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-inner {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .total-bond {
+            background-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .total-bond .icon-inner {
+            background-color: #D97706;
+        }
+
+        .active-bond {
+            background-color: rgba(219, 39, 119, 0.3);
+        }
+
+        .active-bond .icon-inner {
+            background-color: #DB2777;
+        }
+
+        .standby-bond {
+            background-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .standby-bond .icon-inner {
+            background-color: #7C3AED;
+        }
+
+        .bonding-apy {
+            background-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .bonding-apy .icon-inner {
+            background-color: #4F46E5;
+        }
+
+        .card-value {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .main-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sub-value {
+            font-size: 14px;
+            color: #34D399;
+        }
+
+        /* Search Section */
+        .search-form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 16px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6B7280;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3FBDD0;
+        }
+
+        .manage-btn {
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .manage-btn:hover {
+            background-color: #2D3348;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .filter-tab {
+            background-color: transparent;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+        }
+
+        .filter-tab.active {
+            background-color: #3FBDD0;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .nodes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .nodes-table th, .nodes-table td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .nodes-table th {
+            background-color: #1A1F2E;
+            color: #9CA3AF;
+            font-weight: normal;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .nodes-table th i {
+            margin-left: 4px;
+            font-size: 12px;
+        }
+
+        .nodes-table tbody tr {
+            background-color: #1A1F2E;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .nodes-table tbody tr:hover {
+            background-color: #2D3348;
+        }
+
+        .address-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .address-cell i {
+            color: #6B7280;
+            cursor: pointer;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1A1F2E;
+            border-radius: 8px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #9CA3AF;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #9CA3AF;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: #0B0E17;
+            border: 1px solid #2D3348;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3FBDD0;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid #2D3348;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background-color: #3FBDD0;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Search Results */
+        .search-results {
+            display: none;
+            background-color: #1A1F2E;
+            border: 1px solid #2D3348;
+            border-radius: 4px;
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            position: absolute;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #2D3348;
+        }
+
+        .search-result-item:hover {
+            background-color: #2D3348;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #2D3348;
+            }
+
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+        }
+
+        /* Mobile menu styles */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar.show-mobile {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                    <span class="logo-text">THORSWAP</span>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-item">
+                        <i class="fa-solid fa-right-left"></i>
+                        <span>SWAP</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-coins"></i>
+                        <span>EARN</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-piggy-bank"></i>
+                        <span>BORROW</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span>REFERRAL</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>POOL</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span>DEPOSIT</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                        <span>LIQUIDITY</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span>RUNEPOOL</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>WALLET</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>WALLET</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>SEND</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-user"></i>
+                        <span>THORName</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>STATS</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-chart-column"></i>
+                        <span>DASHBOARD</span>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>THORYield</span>
+                    </div>
+                    <div class="menu-item active">
+                        <i class="fa-solid fa-server"></i>
+                        <span>THORNode</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-header">
+                        <span>THOR</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="menu-item">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <span>STAKING</span>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-item support">
+                        <i class="fa-solid fa-life-ring"></i>
+                        <span>SUPPORT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="header-right">
+                    <button class="connect-btn">Connect</button>
+                    <div class="icon-btn notification">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge">2</span>
+                    </div>
+                    <div class="icon-btn">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+                    <div class="icon-btn">
+                        <i class="fa-solid fa-rotate"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Total Bond</span>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="card-icon total-bond">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">$114.56M</span>
+                        <span class="sub-value">($3.9M ↑)</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Active Bond</span>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="card-icon active-bond">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">$101.06M</span>
+                        <span class="sub-value">($2.8M ↑)</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Standby Bond</span>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="card-icon standby-bond">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">$13.50M</span>
+                        <span class="sub-value">($1.1M ↑)</span>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>Bonding APY</span>
+                        </div>
+                        <div class="card-icon bonding-apy">
+                            <div class="icon-inner"></div>
+                        </div>
+                    </div>
+                    <div class="card-value">
+                        <span class="main-value">558.92%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Form -->
+            <form action="" id="searchForm" class="search-form">
+                <div class="search-container">
+                    <i class="fa-solid fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        name="nodeAddress" 
+                        id="nodeAddress" 
+                        placeholder="Search node address" 
+                        class="search-input"
+                        autocomplete="off"
+                    >
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <button type="button" id="manageBtn" class="manage-btn">Manage</button>
+            </form>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active">Active</button>
+                <button class="filter-tab">Standby</button>
+                <button class="filter-tab">Whitelisted</button>
+            </div>
+
+            <div class="table-container">
+                <table class="nodes-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Address</th>
+                            <th>
+                                Version
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>IP</th>
+                            <th>
+                                Rewards
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>
+                                Slash
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>
+                                Bond
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                            <th>
+                                Active Block
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="nodesTableBody">
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor0...g2kz
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>104.194.134.58</td>
+                            <td>3,933.22</td>
+                            <td>0</td>
+                            <td>1,185,503.88</td>
+                            <td>18,698,247</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thorh...mahl
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>107.189.24.101</td>
+                            <td>3,933.07</td>
+                            <td>1</td>
+                            <td>1,128,026.10</td>
+                            <td>19,075,189</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor0...j5pq
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.231</td>
+                            <td>3,893.33</td>
+                            <td>314</td>
+                            <td>1,123,104.04</td>
+                            <td>19,912,946</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor4...88d
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.228</td>
+                            <td>3,933.22</td>
+                            <td>0</td>
+                            <td>1,119,705.81</td>
+                            <td>20,007,892</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thorp...em0l
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.230</td>
+                            <td>3,893.50</td>
+                            <td>250</td>
+                            <td>1,112,166.56</td>
+                            <td>20,052,024</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thor3...6qyl
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>34.88.64.113</td>
+                            <td>3,933.22</td>
+                            <td>0</td>
+                            <td>1,100,696.06</td>
+                            <td>20,007,892</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa-regular fa-heart"></i></td>
+                            <td class="address-cell">
+                                thork...jsv8
+                                <i class="fa-regular fa-copy"></i>
+                            </td>
+                            <td>3.2.0</td>
+                            <td>38.76.0.232</td>
+                            <td>3,893.50</td>
+                            <td>250</td>
+                            <td>1,099,562.39</td>
+                            <td>17,419,861</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Node Modal -->
+    <div id="manageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Node</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="manageNodeForm">
+                    <div class="form-group">
+                        <label for="nodeAddressInput">Node Address</label>
+                        <input type="text" id="nodeAddressInput" name="nodeAddressInput" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeVersion">Version</label>
+                        <input type="text" id="nodeVersion" name="nodeVersion" class="form-control" value="3.2.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeIP">IP Address</label>
+                        <input type="text" id="nodeIP" name="nodeIP" class="form-control" placeholder="e.g. 104.194.134.58" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeStatus">Status</label>
+                        <select id="nodeStatus" name="nodeStatus" class="form-control">
+                            <option value="active">Active</option>
+                            <option value="standby">Standby</option>
+                            <option value="whitelisted">Whitelisted</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nodeBond">Bond Amount</label>
+                        <input type="text" id="nodeBond" name="nodeBond" class="form-control" placeholder="e.g. 1,000,000.00" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancelManage">Cancel</button>
+                <button type="button" class="btn-submit" id="submitManage">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Node data for search and display
+            const nodeData = [
+                { 
+                    address: 'thor0...g2kz', 
+                    fullAddress: 'thor0123456789abcdefg2kz',
+                    version: '3.2.0', 
+                    ip: '104.194.134.58', 
+                    rewards: '3,933.22', 
+                    slash: '0', 
+                    bond: '1,185,503.88', 
+                    activeBlock: '18,698,247',
+                    status: 'active'
+                },
+                { 
+                    address: 'thorh...mahl', 
+                    fullAddress: 'thorh123456789abcdefmahl',
+                    version: '3.2.0', 
+                    ip: '107.189.24.101', 
+                    rewards: '3,933.07', 
+                    slash: '1', 
+                    bond: '1,128,026.10', 
+                    activeBlock: '19,075,189',
+                    status: 'active'
+                },
+                { 
+                    address: 'thor0...j5pq', 
+                    fullAddress: 'thor0123456789abcdefj5pq',
+                    version: '3.2.0', 
+                    ip: '38.76.0.231', 
+                    rewards: '3,893.33', 
+                    slash: '314', 
+                    bond: '1,123,104.04', 
+                    activeBlock: '19,912,946',
+                    status: 'active'
+                },
+                { 
+                    address: 'thor4...88d', 
+                    fullAddress: 'thor4123456789abcdef88d',
+                    version: '3.2.0', 
+                    ip: '38.76.0.228', 
+                    rewards: '3,933.22', 
+                    slash: '0', 
+                    bond: '1,119,705.81', 
+                    activeBlock: '20,007,892',
+                    status: 'active'
+                },
+                { 
+                    address: 'thorp...em0l', 
+                    fullAddress: 'thorp123456789abcdefem0l',
+                    version: '3.2.0', 
+                    ip: '38.76.0.230', 
+                    rewards: '3,893.50', 
+                    slash: '250', 
+                    bond: '1,112,166.56', 
+                    activeBlock: '20,052,024',
+                    status: 'active'
+                },
+                { 
+                    address: 'thor3...6qyl', 
+                    fullAddress: 'thor3123456789abcdef6qyl',
+                    version: '3.2.0', 
+                    ip: '34.88.64.113', 
+                    rewards: '3,933.22', 
+                    slash: '0', 
+                    bond: '1,100,696.06', 
+                    activeBlock: '20,007,892',
+                    status: 'active'
+                },
+                { 
+                    address: 'thork...jsv8', 
+                    fullAddress: 'thork123456789abcdefjsv8',
+                    version: '3.2.0', 
+                    ip: '38.76.0.232', 
+                    rewards: '3,893.50', 
+                    slash: '250', 
+                    bond: '1,099,562.39', 
+                    activeBlock: '17,419,861',
+                    status: 'active'
+                }
+            ];
+
+            // Toggle favorite (heart) icons
+            const heartIcons = document.querySelectorAll('.fa-heart');
+            heartIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    this.classList.toggle('fa-regular');
+                    this.classList.toggle('fa-solid');
+                    if (this.classList.contains('fa-solid')) {
+                        this.style.color = '#EF4444';
+                    } else {
+                        this.style.color = '';
+                    }
+                });
+            });
+
+            // Copy address functionality
+            const copyIcons = document.querySelectorAll('.fa-copy');
+            copyIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const addressText = this.parentElement.textContent.trim();
+                    navigator.clipboard.writeText(addressText)
+                        .then(() => {
+                            // Show a temporary tooltip or change icon color to indicate success
+                            const originalColor = this.style.color;
+                            this.style.color = '#3FBDD0';
+                            setTimeout(() => {
+                                this.style.color = originalColor;
+                            }, 1000);
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy: ', err);
+                        });
+                });
+            });
+
+            // Filter tabs functionality
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    const status = this.textContent.toLowerCase();
+                    filterTableByStatus(status);
+                });
+            });
+
+            // Filter table by status
+            function filterTableByStatus(status) {
+                const tableBody = document.getElementById('nodesTableBody');
+                tableBody.innerHTML = '';
+                
+                const filteredNodes = status === 'active' ? 
+                    nodeData : 
+                    nodeData.filter(node => node.status === status);
+                
+                filteredNodes.forEach(node => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><i class="fa-regular fa-heart"></i></td>
+                        <td class="address-cell">
+                            ${node.address}
+                            <i class="fa-regular fa-copy"></i>
+                        </td>
+                        <td>${node.version}</td>
+                        <td>${node.ip}</td>
+                        <td>${node.rewards}</td>
+                        <td>${node.slash}</td>
+                        <td>${node.bond}</td>
+                        <td>${node.activeBlock}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Reattach event listeners
+                attachEventListeners();
+            }
+
+            // Attach event listeners to dynamically created elements
+            function attachEventListeners() {
+                // Heart icons
+                document.querySelectorAll('.fa-heart').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        this.classList.toggle('fa-regular');
+                        this.classList.toggle('fa-solid');
+                        if (this.classList.contains('fa-solid')) {
+                            this.style.color = '#EF4444';
+                        } else {
+                            this.style.color = '';
+                        }
+                    });
+                });
+                
+                // Copy icons
+                document.querySelectorAll('.fa-copy').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const addressText = this.parentElement.textContent.trim();
+                        navigator.clipboard.writeText(addressText)
+                            .then(() => {
+                                const originalColor = this.style.color;
+                                this.style.color = '#3FBDD0';
+                                setTimeout(() => {
+                                    this.style.color = originalColor;
+                                }, 1000);
+                            })
+                            .catch(err => {
+                                console.error('Failed to copy: ', err);
+                            });
+                    });
+                });
+            }
+
+            // Mobile sidebar toggle
+            const createMobileMenu = () => {
+                const header = document.querySelector('.header');
+                if (!document.querySelector('.menu-toggle')) {
+                    const menuButton = document.createElement('button');
+                    menuButton.classList.add('menu-toggle');
+                    menuButton.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                    
+                    menuButton.addEventListener('click', function() {
+                        const sidebar = document.querySelector('.sidebar');
+                        sidebar.classList.toggle('show-mobile');
+                    });
+                    
+                    if (window.innerWidth <= 768) {
+                        header.prepend(menuButton);
+                    }
+                }
+            };
+            
+            createMobileMenu();
+            window.addEventListener('resize', createMobileMenu);
+
+            // Sorting functionality for table columns
+            const sortableHeaders = document.querySelectorAll('th i.fa-chevron-down');
+            sortableHeaders.forEach(header => {
+                header.parentElement.addEventListener('click', function() {
+                    const columnIndex = Array.from(this.parentElement.children).indexOf(this);
+                    const table = document.querySelector('.nodes-table');
+                    const rows = Array.from(table.querySelectorAll('tbody tr'));
+                    
+                    // Toggle sort direction
+                    const isAscending = this.getAttribute('data-sort') !== 'asc';
+                    
+                    // Reset all headers
+                    sortableHeaders.forEach(h => {
+                        h.parentElement.removeAttribute('data-sort');
+                        h.className = 'fa-solid fa-chevron-down';
+                    });
+                    
+                    // Set current header sort state
+                    this.setAttribute('data-sort', isAscending ? 'asc' : 'desc');
+                    header.className = isAscending ? 
+                        'fa-solid fa-chevron-up' : 
+                        'fa-solid fa-chevron-down';
+                    
+                    // Sort the rows
+                    rows.sort((a, b) => {
+                        const aValue = a.children[columnIndex].textContent.trim();
+                        const bValue = b.children[columnIndex].textContent.trim();
+                        
+                        // Handle numeric values
+                        if (!isNaN(parseFloat(aValue)) && !isNaN(parseFloat(bValue))) {
+                            return isAscending ? 
+                                parseFloat(aValue) - parseFloat(bValue) : 
+                                parseFloat(bValue) - parseFloat(aValue);
+                        }
+                        
+                        // Handle text values
+                        return isAscending ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+                    
+                    // Reinsert rows in sorted order
+                    const tbody = table.querySelector('tbody');
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('nodeAddress');
+            const searchResults = document.getElementById('searchResults');
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                if (query.length < 2) {
+                    searchResults.classList.remove('show');
+                    return;
+                }
+                
+                const matches = nodeData.filter(node => 
+                    node.address.toLowerCase().includes(query) || 
+                    node.fullAddress.toLowerCase().includes(query) ||
+                    node.ip.includes(query)
+                );
+                
+                if (matches.length > 0) {
+                    searchResults.innerHTML = '';
+                    matches.forEach(node => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'search-result-item';
+                        resultItem.textContent = `${node.address} (${node.ip})`;
+                        resultItem.addEventListener('click', function() {
+                            searchInput.value = node.address;
+                            searchResults.classList.remove('show');
+                            
+                            // Highlight the row in the table
+                            const rows = document.querySelectorAll('.nodes-table tbody tr');
+                            rows.forEach(row => row.style.backgroundColor = '');
+                            
+                            const matchingRow = Array.from(rows).find(row => 
+                                row.children[1].textContent.trim().includes(node.address)
+                            );
+                            
+                            if (matchingRow) {
+                                matchingRow.style.backgroundColor = '#2D3348';
+                                matchingRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        });
+                        searchResults.appendChild(resultItem);
+                    });
+                    searchResults.classList.add('show');
+                } else {
+                    searchResults.innerHTML = '<div class="search-result-item">No matches found</div>';
+                    searchResults.classList.add('show');
+                }
+            });
+            
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.remove('show');
+                }
+            });
+
+            // Form submission
+            const searchForm = document.getElementById('searchForm');
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const query = searchInput.value.toLowerCase();
+                
+                if (query.length > 0) {
+                    const matches = nodeData.filter(node => 
+                        node.address.toLowerCase().includes(query) || 
+                        node.fullAddress.toLowerCase().includes(query) ||
+                        node.ip.includes(query)
+                    );
+                    
+                    if (matches.length > 0) {
+                        // Filter the table to show only matching rows
+                        const tableBody = document.getElementById('nodesTableBody');
+                        tableBody.innerHTML = '';
+                        
+                        matches.forEach(node => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td><i class="fa-regular fa-heart"></i></td>
+                                <td class="address-cell">
+                                    ${node.address}
+                                    <i class="fa-regular fa-copy"></i>
+                                </td>
+                                <td>${node.version}</td>
+                                <td>${node.ip}</td>
+                                <td>${node.rewards}</td>
+                                <td>${node.slash}</td>
+                                <td>${node.bond}</td>
+                                <td>${node.activeBlock}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                        
+                        // Reattach event listeners
+                        attachEventListeners();
+                    }
+                }
+            });
+
+            // Modal functionality
+            const manageBtn = document.getElementById('manageBtn');
+            const manageModal = document.getElementById('manageModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelManage = document.getElementById('cancelManage');
+            const submitManage = document.getElementById('submitManage');
+            const manageNodeForm = document.getElementById('manageNodeForm');
+            
+            manageBtn.addEventListener('click', function() {
+                // Pre-fill the form if a node is selected
+                const selectedNode = searchInput.value;
+                if (selectedNode) {
+                    const node = nodeData.find(n => n.address === selectedNode);
+                    if (node) {
+                        document.getElementById('nodeAddressInput').value = node.address;
+                        document.getElementById('nodeVersion').value = node.version;
+                        document.getElementById('nodeIP').value = node.ip;
+                        document.getElementById('nodeStatus').value = node.status;
+                        document.getElementById('nodeBond').value = node.bond;
+                    }
+                }
+                
+                manageModal.classList.add('show');
+            });
+            
+            closeModal.addEventListener('click', function() {
+                manageModal.classList.remove('show');
+            });
+            
+            cancelManage.addEventListener('click', function() {
+                manageModal.classList.remove('show');
+            });
+            
+            submitManage.addEventListener('click', function() {
+                // Validate form
+                const form = document.getElementById('manageNodeForm');
+                if (form.checkValidity()) {
+                    // Get form data
+                    const formData = {
+                        address: document.getElementById('nodeAddressInput').value,
+                        version: document.getElementById('nodeVersion').value,
+                        ip: document.getElementById('nodeIP').value,
+                        status: document.getElementById('nodeStatus').value,
+                        bond: document.getElementById('nodeBond').value
+                    };
+                    
+                    // In a real application, you would send this data to a server
+                    console.log('Node data submitted:', formData);
+                    
+                    // Show success message
+                    alert('Node updated successfully!');
+                    
+                    // Close modal
+                    manageModal.classList.remove('show');
+                } else {
+                    form.reportValidity();
+                }
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === manageModal) {
+                    manageModal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

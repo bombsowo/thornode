@@ -1,0 +1,135 @@
+body {
+    background-color: #0f172a;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+}
+
+.connect-button {
+    background: none;
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bond-summary {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 20px;
+    gap: 15px;
+}
+
+.bond-card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 20%;
+    min-width: 200px;
+    transition: background 0.3s ease;
+}
+
+.bond-card:hover {
+    background: #334155;
+}
+
+.filter-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+}
+
+.filter-controls input {
+    background: #1e293b;
+    border: none;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    width: 250px;
+}
+
+.manage-button, .filter-controls button {
+    background: #38bdf8;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.bond-table {
+    width: 90%;
+    margin: 20px auto;
+    overflow-x: auto;
+}
+
+.bond-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bond-table th, .bond-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+}
+
+.bond-table tr:hover {
+    background: #1e293b;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+    .bond-summary {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .bond-card {
+        width: 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    .bond-summary {
+        flex-direction: column;
+        align-items: center;
+    }
+    .bond-card {
+        width: 90%;
+    }
+    .filter-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    .filter-controls input {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .connect-button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+    .bond-card h2 {
+        font-size: 18px;
+    }
+    .bond-table th, .bond-table td {
+        font-size: 12px;
+        padding: 10px;
+    }
+}
